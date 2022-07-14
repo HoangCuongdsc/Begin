@@ -1,0 +1,114 @@
+import numpy as np
+import pandas as pd
+
+# điểm và lá bài
+poker_of_you= 0
+list_card_of_you= []
+list_card_of_com = []
+poker_of_computer=0
+p= 0                        # tạo điểm đầu (point)
+
+# tạo list card và tạo mảng rỗng 
+card= [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10,10, 10, 10, 10,10, 10, 10, 10]
+card_= []
+C_1,C_2,C_3,C_4,C_5,C_6,C_7=np.empty(10),np.empty(10),np.empty(10),np.empty(10),np.empty(10),np.empty(10),np.empty(10)
+def remo(x,num):
+    x.remove(num)
+    return x
+
+# lấy 2 thẻ bài đầu tiên cho người và máy 
+for C in [C_1,C_2]:
+    x= int(np.random.choice(card, replace=False))
+    list_card_of_you.append(x)
+    C[p]=x
+    card= remo(card,x)      # dùng để xóa card đã rút trong list card
+    if x ==1 :              # trường hợp bốc trúng Át
+        x = 10 
+    poker_of_you += x
+
+    a = int(np.random.choice(card,replace=False))
+    list_card_of_com.append(a)
+    card= remo(card,a)
+    if a ==1 : 
+        a = 10 
+    poker_of_computer += a
+
+# in ra kết quả lượt 1
+print(' You_card:',list_card_of_you, '\n' ,'Poker_of_you: ', poker_of_you,'\n','\n','Com_card:',list_card_of_com,'\n', 'Poker_of_computer: ', poker_of_computer )
+
+
+f= (C_3,C_4,C_5,C_6)        # tạo list mới
+rou= 0                      #(round)
+
+# tạo vòng lặp cho lựa chọn rút bài
+while poker_of_you < 21:
+    print("Do you want to continue: Y/ N")
+    ans= input()
+    if ans == 'N':
+        break
+    f[rou][p]
+    take_C= np.random.choice(card)
+    f[rou][p]= take_C
+    list_card_of_you.append(take_C)
+    card= remo(card,take_C)
+    poker_of_you += take_C
+    print(' You_card:', list_card_of_you)
+    print(' Poker_of_you: ',poker_of_you)
+    rou +=1
+    if poker_of_you >21:
+        break
+
+# trường hợp rút ra Át và toang >21 thì  -9 . sẽ ko ai bốc 2 lá A,A lại bốc thêm. nên chỉ có 1 A thôi
+if poker_of_you > 21 and 1 in list_card_of_you[:2]:
+    poker_of_you -=9
+    while poker_of_you < 21:
+        ans= input()
+        if ans == 'N':
+            break
+        f[rou][p]
+        take_C= np.random.choice(card)
+        f[rou][p]=take_C
+        list_card_of_you.append(take_C)
+        card= remo(card,take_C)
+        poker_of_you += take_C
+        print(' You_card:', list_card_of_you)
+        print(' Poker_of_you: ',poker_of_you)
+        rou +=1
+
+# tính xác suất để computer chiến thắng
+
+# ưu tiên cho computer. và không muốn nhà cái mất tiền.
+# tạo 3 lá bài ngâu nhiên/ chọn >4 lá người win rất thấp
+list_3= np.random.choice(card, 3, replace=False)
+
+# điểm > 21 là thua 
+# Com > human . cho kết quả luôn.
+while True:
+    if poker_of_computer > poker_of_you and poker_of_computer <= 21:
+        break
+    # com < human: chạy bài. 
+
+    if poker_of_computer <= poker_of_you and poker_of_computer <= 21:
+        for i in list_3:
+            poker_of_computer += i
+            if poker_of_computer <= 21 :
+                list_card_of_com.append(i)
+                card= remo(card,i)
+            if poker_of_computer > 21:
+                poker_of_computer -= i
+        break
+print(' Com_card:',list_card_of_com)
+print(' Poker_of_computer:', poker_of_computer)
+if poker_of_you > poker_of_computer and poker_of_you <= 21:
+    print('\t','You Win')
+elif poker_of_you == poker_of_computer:
+    print('\t','Draw')
+else :
+     print('\t','You lose')
+
+# tạo dataframe lưu giữ các giá trị mục đích cho thống kê và dự đoán
+df= pd.DataFrame({'C_1':C_1,'C_2':C_2,'C_3':C_3,'C_4':C_4,'C_5':C_5,'C_6':C_6,"C_7":C_7})
+print(df.round(0))
+
+# vấn đề là khả năng để computer >21 là không có.
+# tính xác suất là việc phức tạp
