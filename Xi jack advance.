@@ -75,14 +75,13 @@ if poker_of_you > 21 and 1 in list_card_of_you[:2]:
         print(' Poker_of_you: ',poker_of_you)
         rou +=1
 
-# tính xác suất để computer chiến thắng
-
 # ưu tiên cho computer. và không muốn nhà cái mất tiền.
 # tạo 3 lá bài ngâu nhiên/ chọn >4 lá người win rất thấp
+
 list_3= np.random.choice(card, 3, replace=False)
 
 # điểm > 21 là thua 
-# Com > human . cho kết quả luôn.
+# Com > you . cho ra kết quả luôn.
 while True:
     if poker_of_computer > poker_of_you and poker_of_computer <= 21:
         break
@@ -97,8 +96,12 @@ while True:
             if poker_of_computer > 21:
                 poker_of_computer -= i
         break
+
+# hiển thị bài của computer
 print(' Com_card:',list_card_of_com)
 print(' Poker_of_computer:', poker_of_computer)
+
+# kết quả
 if poker_of_you > poker_of_computer and poker_of_you <= 21:
     print('\t','You Win')
 elif poker_of_you == poker_of_computer:
