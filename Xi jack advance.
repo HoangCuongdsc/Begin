@@ -114,4 +114,4 @@ df= pd.DataFrame({'C_1':C_1,'C_2':C_2,'C_3':C_3,'C_4':C_4,'C_5':C_5,'C_6':C_6,"C
 print(df.round(0))
 
 # vấn đề là khả năng để computer >21 là không có.
-# tính xác suất là việc phức tạp
+# bộ tính xác suất chưa hoàn thiện
