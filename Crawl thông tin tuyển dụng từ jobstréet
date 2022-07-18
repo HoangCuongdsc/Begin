@@ -1,0 +1,45 @@
+import requests
+from bs4 import BeautifulSoup
+import html5lib
+
+# địa chỉ web cần crawl
+http ="https://www.jobstreet.vn/j?sp=search&st=date&q=Data+Analyst&l=H%E1%BB%93+Ch%C3%AD+Minh"
+
+# hàm xuất thông tin tên job, job đã đăng tuyển được bao nhiêu ngày, nội dung job
+def get_job(url):
+    tx= requests.get(url)
+    bs= BeautifulSoup(tx.text, "html5lib")
+    titlee = bs.find("title").text
+    time = bs.find("div",id="job-meta").text
+    concept_job= bs.find("div",id="job-description-container").text
+    return titlee,time,concept_job
+
+# hàm lấy các job có trong 1 trang/ trong đó 1 phần tách ra là địa chỉ trang kế *site[-1]*
+def find_job(url):
+    tx= requests.get(url)
+    bs= BeautifulSoup(tx.text,"html5lib")
+    links= bs.find("div",id='jobresults').find_all("a")
+    site=[]
+    for key in links:
+        site.append("https://www.jobstreet.vn"+str(key["href"])) 
+    return site[:-6], site[-1]
+
+# xuất địa chỉ trang job tiếp theo của web/ (nextpage chứa * site[-1] *)
+_,nextpage = find_job(http)
+
+# hàm lấy địa chỉ của 3 trang tiếp theo.
+def list_page(nextpage):
+    nextpage= nextpage                      # gán địa chị trang tiếp theo ở mỗi vòng lặp
+    list_p=[]    
+    for i in range(3):
+        list_p.append(nextpage)
+        nextpage= find_job(nextpage)[1]     # đây là lấy địa chỉ trang kế =(site[-1])
+    return list_p
+
+# vòng lặp cho từng trang.
+for i in list_page(nextpage):
+    job,_ = find_job(i)                     # lấy các job có trong trang
+    
+    # vòng lặp cho từng job/ xuất ra thông tin về job, time_long
+    for i in job[:-4]:
+        print(get_job(i)[:2])
